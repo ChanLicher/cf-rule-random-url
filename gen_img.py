@@ -9,6 +9,7 @@ import argparse
 # 这里默认生成 .jpg，请确保 CF 规则也是 .jpg)
 parser = argparse.ArgumentParser()
 parser.add_argument("--OUTPUT_EXT", type=str, default=".jpg")
+parser.add_argument("--HASH_LENGTH", type=int, default=2)
 args = parser.parse_args()
 OUTPUT_EXT = args.OUTPUT_EXT
 
@@ -21,7 +22,7 @@ OUTPUT_DIR = Path("dist")
 # 2 => 16^2 = 256 个文件
 # 3 => 16^3 = 4096 个文件 (对应 Cloudflare 规则 substring(..., 0, 3))
 # ---------------------------------------------------------
-HASH_LENGTH = 3
+HASH_LENGTH = args.HASH_LENGTH
 NUM_FILES = 16 ** HASH_LENGTH
 
 def ensure_dir(path: Path):
