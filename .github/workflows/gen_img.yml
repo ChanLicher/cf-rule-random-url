@@ -28,4 +28,4 @@ jobs:
 
       - name: Run gen_img.py
         run: |
-          python gen_img.py
+          python gen_img.py --OUTPUT_EXT .webp
