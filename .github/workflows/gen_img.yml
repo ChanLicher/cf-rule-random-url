@@ -1,0 +1,31 @@
+name: Daily Run gen_img.py
+
+on:
+  # schedule:
+  #   # 每天 00:00 UTC 运行一次（注意：这是 UTC 时间）
+  #   - cron: '0 5 * * *'
+  push:
+    paths:
+      - 'dist/**'      # 只有 dist 目录变化才触发
+  workflow_dispatch:   # 允许手动触发
+
+jobs:
+  run-python:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'   # 如需其他版本可修改
+
+      - name: Install dependencies (optional)
+        run: |
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Run gen_img.py
+        run: |
+          python gen_img.py
