@@ -8,7 +8,7 @@ import argparse
 # 除非你真的是想生成包含图片信息的 json 文本文件。
 # 这里默认生成 .jpg，请确保 CF 规则也是 .jpg)
 parser = argparse.ArgumentParser()
-parser.add_argument("--OUTPUT_EXT", type=str, default=".jpg")
+parser.add_argument("--OUTPUT_EXT", type=str, default="auto")
 parser.add_argument("--HASH_LENGTH", type=int, default=2)
 args = parser.parse_args()
 OUTPUT_EXT = args.OUTPUT_EXT
@@ -54,7 +54,10 @@ def process_category(category_name: str, source_files: list):
         src_img = next(img_cycle)
         
         # 生成十六进制文件名: 000.jpg ... fff.jpg
-        file_name = f"{i:0{HASH_LENGTH}x}{OUTPUT_EXT}"
+        # 如果 OUTPUT_EXT = auto，则保留源文件后缀（例如 .jpg/.png/.gif/.webp）
+        ext = OUTPUT_EXT if OUTPUT_EXT != "auto" else src_img.suffix.lower()
+        file_name = f"{i:0{HASH_LENGTH}x}{ext}"
+
         dest_path = category_output_dir / file_name
         
         shutil.copy(src_img, dest_path)
