@@ -4,7 +4,7 @@
 
 ## 🌟 原理
 
-利用 Cloudflare 的边缘重写能力（Rewrite URL），将用户的分类请求（如 `/h`）动态映射到预生成的静态资源路径（如 `/h/a1b.jpg`）。整个过程在边缘节点完成，无需服务器后端，无需 Worker 调用额度。
+利用 Github Actions 检测 oriImg 文件变化运行脚本推送图片，再用 Cloudflare 的 Pages 托管 Gtihub 仓库里 /dist 的文件，最后利用边缘重写能力（Rewrite URL），将用户的分类请求（如 `/h`）动态映射到预生成的静态资源路径（如 `/h/a1b.jpg`）。整个过程在边缘节点完成，无需服务器后端，无需 Worker 调用额度。
 
 ## 📂 目录结构
 
@@ -21,14 +21,15 @@
 
 ### 1. 准备素材
 在 `oriImg` 目录下建立你的分类文件夹（例如 `h`, `pc`, `mobile` 等），并将对应的图片放入其中。
-> 支持 `.jpg`, `.png`, `.webp` 等常见格式。
+> 支持 `.jpg`, `.png`, `.webp` , `.gif` 等常见格式。
 
 ### 2. 生成静态库
 运行 Python 脚本，它会将图片扩充并重命名为十六进制哈希文件名（`000.jpg` ~ `fff.jpg`），以适配 Cloudflare 的随机逻辑。
 
 ```bash
-python gen_img.py
+python gen_img.py --OUTPUT_EXT .jpg --HASH_LENGTH 2
 ```
+--OUTPUT_EXT 默认为 auto，结果为不修改源文件的扩展名，只修改文件名，--HASH_LENGTH 默认为 2。
 *脚本会在 `dist/` 目录下生成处理好的文件，每个分类包含 4096 个文件（16^3）。*
 
 ### 3. 部署到 Cloudflare Pages
@@ -51,7 +52,7 @@ python gen_img.py
 * **Path Rewrite** (选择 **Dynamic**):
   * 在输入框中填入以下表达式：
   ```text
-  concat(http.request.uri.path, "/", substring(uuidv4(cf.random_seed), 0, 3), ".jpg")
+  concat(http.request.uri.path, "/", substring(uuidv4(cf.random_seed), 0, 2), ".jpg")
   ```
 
 > **⚠️ 注意**：此规则假设你的请求路径（如 `/h`）直接对应 `dist` 下的文件夹名。规则会自动拼接路径，生成如 `/h/1a2.jpg` 的重写地址。
