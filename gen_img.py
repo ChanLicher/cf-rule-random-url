@@ -8,7 +8,7 @@ import argparse
 # 除非你真的是想生成包含图片信息的 json 文本文件。
 # 这里默认生成 .jpg，请确保 CF 规则也是 .jpg)
 parser = argparse.ArgumentParser()
-parser.add_argument("OUTPUT_EXT", type=str, default=".jpg")
+parser.add_argument("--OUTPUT_EXT", type=str, default=".jpg")
 args = parser.parse_args()
 OUTPUT_EXT = args.OUTPUT_EXT
 
