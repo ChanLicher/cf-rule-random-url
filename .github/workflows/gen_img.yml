@@ -6,16 +6,21 @@ on:
   #   - cron: '0 5 * * *'
   push:
     paths:
-      - 'dist/**'      # 只有 dist 目录变化才触发
+      - 'oriImg/**'    # 当原始图片有变动时触发
   workflow_dispatch:   # 允许手动触发
 
+permissions:
+  contents: write
+
 jobs:
-  run-python:
+  gen-images:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # 为了后面正常 commit/push
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -26,6 +31,27 @@ jobs:
         run: |
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-      - name: Run gen_img.py
+      - name: Generate images
         run: |
           python gen_img.py --OUTPUT_EXT .webp
+
+      - name: Commit and push generated files
+        run: |
+          # 配置提交用户
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          # 将 dist 下的变更加入暂存区
+          git add dist
+
+          # 如果没有任何变化，就直接退出
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+
+          # 提交并推送
+          git commit -m "chore: update generated images [skip ci]"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
