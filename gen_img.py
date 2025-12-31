@@ -2,6 +2,15 @@ import os
 import shutil
 from pathlib import Path
 from itertools import cycle
+import argparse
+
+# 输出文件后缀 (如果你的规则是 .json，这里依然建议生成 .jpg，
+# 除非你真的是想生成包含图片信息的 json 文本文件。
+# 这里默认生成 .jpg，请确保 CF 规则也是 .jpg)
+parser = argparse.ArgumentParser()
+parser.add_argument("OUTPUT_EXT", type=str, default=".jpg")
+args = parser.parse_args()
+OUTPUT_EXT = args.OUTPUT_EXT
 
 # 配置
 SOURCE_DIR = Path("oriImg")
@@ -14,11 +23,6 @@ OUTPUT_DIR = Path("dist")
 # ---------------------------------------------------------
 HASH_LENGTH = 3
 NUM_FILES = 16 ** HASH_LENGTH
-
-# 输出文件后缀 (如果你的规则是 .json，这里依然建议生成 .jpg，
-# 除非你真的是想生成包含图片信息的 json 文本文件。
-# 这里默认生成 .jpg，请确保 CF 规则也是 .jpg)
-OUTPUT_EXT = ".jpg" 
 
 def ensure_dir(path: Path):
     if not path.exists():
