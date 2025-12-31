@@ -33,7 +33,7 @@ jobs:
 
       - name: Generate images
         run: |
-          python gen_img.py --OUTPUT_EXT .webp
+          python gen_img.py
 
       - name: Commit and push generated files
         run: |
