@@ -1,4 +1,4 @@
-name: Daily Run gen_img.py
+name: Run gen_img.py
 
 on:
   # schedule:
