@@ -51,7 +51,7 @@ jobs:
           fi
 
           # 提交并推送
-          git commit -m "Chore: Update Generated Images [Skip CI]"
+          git commit -m "Chore: Update Generated Images"
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
